@@ -51,8 +51,27 @@ class TuChongRepository extends LoadingMoreBase<TuChongItem> {
     }
     bool isSuccess = false;
     try {
+
       //to show loading more clearly, in your app,remove this
       //await Future.delayed(const Duration(milliseconds: 500));
+      // i got this error in my terminal,maybe we can even try to fix it 
+//       type 'Null' is not a subtype of
+// type 'Response' in type cast
+// [   +1 ms] I/flutter (15777): #0      TuChongRepository.loadData
+// (package:example/common/data/tu_chong_repository.dart:59:56)
+// [        ] I/flutter (15777): <asynchronous suspension>
+// [        ] I/flutter (15777): #1
+// LoadingMoreBase._innerloadData
+// (package:loading_more_list_library/src/loading_more_list_library
+// .dart:52:28)
+// [        ] I/flutter (15777): <asynchronous suspension>
+// [        ] I/flutter (15777): #2      LoadingMoreBase.refresh
+// (package:loading_more_list_library/src/loading_more_list_library
+// .dart:80:12)
+// [        ] I/flutter (15777): <asynchronous suspension>
+// [        ] I/flutter (15777): #3      TuChongRepository.refresh
+// (package:example/common/data/tu_chong_repository.dart:37:25)
+// [        ] I/flutter (15777): <asynchronous suspension>
       List<TuChongItem>? feedList;
       if (!kIsWeb) {
         final Response result =

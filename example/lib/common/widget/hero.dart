@@ -42,9 +42,7 @@ class _HeroWidgetState extends State<HeroWidget> {
         }
 
         if (flightDirection == HeroFlightDirection.pop) {
-          final bool fixTransform = widget.slideType == SlideType.onlyImage &&
-              (widget.slidePagekey.currentState!.offset != Offset.zero ||
-                  widget.slidePagekey.currentState!.scale != 1.0);
+          final bool fixTransform = widget.slideType == SlideType.onlyImage && (widget.slidePagekey.currentState!.offset != Offset.zero || widget.slidePagekey.currentState!.scale != 1.0);
 
           final Widget toHeroWidget = (toHeroContext.widget as Hero).child;
           return AnimatedBuilder(

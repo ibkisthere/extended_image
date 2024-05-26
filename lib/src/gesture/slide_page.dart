@@ -11,6 +11,7 @@ enum SlideAxis {
   vertical,
 }
 
+// other widgets that are children of this slidePage - ExtendedImage.network(), get the slideType by accessing the ExtendedImageSlidePageState from higher up the widget tree
 enum SlideType {
   wholePage,
   onlyImage,
@@ -36,7 +37,7 @@ class ExtendedImageSlidePage extends StatefulWidget {
   ///builder background when slide page
   final SlidePageBackgroundHandler? slidePageBackgroundHandler;
 
-  ///customize scale of page when slide page
+  ///customize scale of page when slide page - this is the method that is used to customize the scale on the slide page as it is moving, if it is not set, then the defaultSlideScaleHandler will be used
   final SlideScaleHandler? slideScaleHandler;
 
   ///customize offset when slide page
@@ -78,13 +79,16 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
   Animation<Offset>? get backOffsetAnimation => _backOffsetAnimation;
   Animation<double>? _backScaleAnimation;
   Animation<double>? get backScaleAnimation => _backScaleAnimation;
+
   Offset _offset = Offset.zero;
   Offset get offset => _backAnimationController.isAnimating
       ? _backOffsetAnimation!.value
       : _offset;
+
   double _scale = 1.0;
   double get scale =>
       _backAnimationController.isAnimating ? backScaleAnimation!.value : _scale;
+
   bool _popping = false;
 
   @override
@@ -110,6 +114,8 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
   ExtendedImageGestureState? get imageGestureState =>
       _extendedImageGestureState;
   ExtendedImageSlidePageHandlerState? _extendedImageSlidePageHandlerState;
+
+// this function is called everytime the animation changes 
   void _backAnimation() {
     if (mounted) {
       setState(() {
@@ -125,12 +131,16 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     widget.onSlidingPage?.call(this);
   }
 
+
+
   @override
   void dispose() {
     _backAnimationController.removeListener(_backAnimation);
     _backAnimationController.dispose();
     super.dispose();
   }
+
+
 
   void slide(Offset value,
       {ExtendedImageGestureState? extendedImageGestureState,
@@ -144,30 +154,36 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     _extendedImageGestureState = extendedImageGestureState;
     _extendedImageSlidePageHandlerState = extendedImageSlidePageHandlerState;
 
-    if (widget.slideAxis == SlideAxis.horizontal) {
-      _offset += Offset(value.dx, 0.0);
-    } else if (widget.slideAxis == SlideAxis.vertical) {
-      _offset += Offset(0.0, value.dy);
-    } else {
+
+    // if (widget.slideAxis == SlideAxis.horizontal) {
+    //   _offset += Offset(value.dx, 0.0);
+    // } else if (widget.slideAxis == SlideAxis.vertical) {
+    //   _offset += Offset(0.0, value.dy);
+    // } else {
       _offset += value;
-    }
+    // }
+// the _offset value will either be gotten by invoking the slideOffsetHandler with the offset and the state (the slideScaleHandler modifies the value and gives us a new value) or we have the default offset normally
     _offset = widget.slideOffsetHandler?.call(
           _offset,
           state: this,
         ) ??
         _offset;
 
+// the _scale value will either be gotten by invoking the slideScaleHandler with the offset (the slideScaleHandler modifies the value and gives us a new value) or we have the defaultSlideScaleHandler - it is actually a util
     _scale = widget.slideScaleHandler?.call(
           _offset,
           state: this,
         ) ??
+
+        // this is the handler responsible for controlling the scale of the image - it comes from the utils
         defaultSlideScaleHandler(
             offset: _offset,
             pageSize: pageSize,
             pageGestureAxis: widget.slideAxis);
 
-    //if (_scale != 1.0 || _offset != Offset.zero)
-    {
+// add a slideBorderRadiusHandler
+
+    if (_scale != 1.0 || _offset != Offset.zero) {
       _isSliding = true;
       if (widget.slideType == SlideType.onlyImage) {
         _extendedImageGestureState?.slide();
@@ -180,6 +196,8 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
       widget.onSlidingPage?.call(this);
     }
   }
+
+
 
   void endSlide(ScaleEndDetails details) {
     if (mounted && _isSliding) {
@@ -202,6 +220,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
         Navigator.pop(context);
       } else {
         //_isSliding=false;
+        // when the slide has finished trigger the backAnimation for the hero for the sliding page
         if (_offset != Offset.zero || _scale != 1.0) {
           _backOffsetAnimation = _backAnimationController
               .drive(Tween<Offset>(begin: _offset, end: Offset.zero));
@@ -213,6 +232,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
           _backAnimationController.forward();
         } else {
           setState(() {
+            // set isSliding to false because we are not sliding any more
             _isSliding = false;
           });
         }
@@ -222,6 +242,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
 
   @override
   Widget build(BuildContext context) {
+    // gets called first
     _pageSize = MediaQuery.of(context).size;
     final Color pageColor =
         widget.slidePageBackgroundHandler?.call(offset, pageSize) ??
@@ -232,14 +253,24 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
                 pageGestureAxis: widget.slideAxis);
 
     Widget? result = widget.child;
+    // if the widget slideType is the wholePage
     if (widget.slideType == SlideType.wholePage) {
+      // this is what actually performs the scaling and translating of the page
+      // the scale is calculated based on the animation value
+      // the offset is calculated based on the backOffsetAnimation
+      // this is what we are using
       result = Transform.translate(
         offset: offset,
         child: Transform.scale(
           scale: scale,
+          // we add a child
           child: result,
         ),
       );
+      // result = Container(
+      //   color: Colors.green,
+      //   child: result,
+      // );
     }
 
     result = Container(

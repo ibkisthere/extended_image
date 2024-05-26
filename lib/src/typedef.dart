@@ -1,6 +1,6 @@
 import 'dart:ui' as ui show Image;
-import 'package:extended_image/src/gesture/utils.dart';
-import 'package:extended_image/src/utils.dart';
+import 'gesture/utils.dart';
+import 'utils.dart';
 import 'package:flutter/material.dart';
 
 import 'editor/editor_utils.dart';

@@ -38,14 +38,36 @@ class ZoomImageDemo extends StatelessWidget {
             child: ExtendedImage.network(
               imageTestUrl,
               fit: BoxFit.contain,
+              // now when we return the GestureConfig - whether to be scroll , crop , zoom slide, depends on the mode we set which are enum values
+              //enum ExtendedImageMode {
+                //just show image
+                // none,
+                //support be to zoom,scroll
+                // gesture,
+                //support be to crop,rotate,flip
+                // editor
+              // }
               mode: ExtendedImageMode.gesture,
               extendedImageGestureKey: gestureKey,
               initGestureConfigHandler: (ExtendedImageState state) {
+                // here it is used for configuring the settings of the zoom /pan gesture
+                //the effects that you see are basically gesture controlled animation - think in that lane
+                
+                // The zooming in / out (tranforming larger or smaller effect) is essentially an animation - and GestureConfig is what controls it
+
+                //  Both GestureConfig and GestureDetails are in the utils.dart 
+
+                //GestureConfig 
+                // the GestureConfig class is basically a class that is used to set the parameters for the GestureDriven animations - that is what we are returning, lets look at the parent 
+
+                // GestureDetails -> this is a class that has methods that can be used to get information about the current gesture driven animation
+                
                 return GestureConfig(
-                  minScale: 0.9,
-                  animationMinScale: 0.7,
+                  minScale: 0.3,
+                  animationMinScale: 0.2,
                   maxScale: 4.0,
                   animationMaxScale: 4.5,
+                  //from 1.5 we start having some weird movements
                   speed: 1.0,
                   inertialSpeed: 100.0,
                   initialScale: 1.0,
@@ -53,7 +75,9 @@ class ZoomImageDemo extends StatelessWidget {
                   initialAlignment: InitialAlignment.center,
                   reverseMousePointerScrollDirection: true,
                   gestureDetailsIsChanged: (GestureDetails? details) {
-                    //print(details?.totalScale);
+                    // its here in the GestureDetails
+                    print(details?.totalScale);
+                    print(details);
                   },
                 );
               },

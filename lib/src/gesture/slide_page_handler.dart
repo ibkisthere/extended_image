@@ -1,4 +1,4 @@
-import 'package:extended_image/src/typedef.dart';
+import '../typedef.dart';
 import 'package:flutter/material.dart';
 import '../utils.dart';
 import 'slide_page.dart';
@@ -8,7 +8,7 @@ import 'utils.dart';
 ///  create by zmtzawqlp on 2019/6/14
 ///
 
-/// for loading/failed widget
+/// for loading/failed widget - hmmmnnnnn
 class ExtendedImageSlidePageHandler extends StatefulWidget {
   const ExtendedImageSlidePageHandler({
     this.child,
@@ -20,6 +20,8 @@ class ExtendedImageSlidePageHandler extends StatefulWidget {
 
   ///build Hero only for sliding page
   final HeroBuilderForSlidingPage? heroBuilderForSlidingPage;
+
+
   @override
   ExtendedImageSlidePageHandlerState createState() =>
       ExtendedImageSlidePageHandlerState();
@@ -45,22 +47,26 @@ class ExtendedImageSlidePageHandlerState
 
   @override
   Widget build(BuildContext context) {
+    print('hello the slide page handler has been built');
     Widget result = GestureDetector(
+      // the GesturesDetector receiving functions that scale and translate the image as the pointers change
       onScaleStart: _handleScaleStart,
       onScaleUpdate: _handleScaleUpdate,
       onScaleEnd: _handleScaleEnd,
       child: widget.child,
       behavior: HitTestBehavior.translucent,
     );
+
     if (_extendedImageSlidePageState != null) {
       result = widget.heroBuilderForSlidingPage?.call(result) ?? result;
     }
+
     if (_extendedImageSlidePageState != null &&
         _extendedImageSlidePageState!.widget.slideType == SlideType.onlyImage) {
       result = Transform.translate(
-        offset: _extendedImageSlidePageState!.offset,
+        offset: _extendedImageSlidePageState!.offset ,
         child: Transform.scale(
-          scale: _extendedImageSlidePageState!.scale,
+          scale: _extendedImageSlidePageState!.scale - 1.5,
           child: result,
         ),
       );
@@ -73,6 +79,7 @@ class ExtendedImageSlidePageHandlerState
   }
 
   Offset? _updateSlidePagePreOffset;
+
   void _handleScaleUpdate(ScaleUpdateDetails details) {
     ///whether gesture page
     if (_extendedImageSlidePageState != null && details.scale == 1.0) {

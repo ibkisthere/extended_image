@@ -1,4 +1,3 @@
-import 'package:extended_image/extended_image.dart';
 import 'package:extended_image_library/extended_image_library.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
 import 'package:flutter/foundation.dart';

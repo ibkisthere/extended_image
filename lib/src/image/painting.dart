@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'dart:ui' as ui show Image;
 
-import 'package:extended_image/extended_image.dart';
+import '../../extended_image.dart';
 import 'package:flutter/material.dart';
 
 // /// Used by [paintImage] to report image sizes drawn at the end of the frame.

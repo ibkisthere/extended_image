@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:extended_image/src/border_painter.dart';
-import 'package:extended_image/src/gesture/gesture.dart';
-import 'package:extended_image/src/image/raw_image.dart';
-import 'package:extended_image/src/typedef.dart';
-import 'package:extended_image/src/utils.dart';
+import 'border_painter.dart';
+import 'gesture/gesture.dart';
+import 'image/raw_image.dart';
+import 'typedef.dart';
+import 'utils.dart';
 import 'package:extended_image_library/extended_image_library.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -280,7 +280,7 @@ class ExtendedImage extends StatefulWidget {
   /// widget should be placed in a context that sets tight layout constraints.
   /// Otherwise, the image dimensions will change as the image is loaded, which
   /// will result in ugly layout changes.
-  ///
+  ///ExtendedImageMode.gesture
   /// On Android, this may require the
   /// `android.permission.READ_EXTERNAL_STORAGE` permission.
   ///
@@ -563,6 +563,7 @@ class ExtendedImage extends StatefulWidget {
   final bool enableSlideOutPage;
 
   ///init GestureConfig when image is ready.
+  /// the type of a function that reeives out extendedimageState and returns the GestureConfig
   final InitGestureConfigHandler? initGestureConfigHandler;
 
   ///call back of double tap  under ExtendedImageMode.gesture
@@ -1003,6 +1004,7 @@ class _ExtendedImageState extends State<ExtendedImage>
     }
 
     // add for loading/failed/ unGesture image
+    // if the slidePageState is not null and (loading state is not complete and widgetmode is not ExtendedImageMode.gesture) , (maybe the state when it is not should just be a sliding page?
     if (_slidePageState != null &&
         !(_loadState == LoadState.completed &&
             widget.mode == ExtendedImageMode.gesture)) {
@@ -1163,6 +1165,8 @@ class _ExtendedImageState extends State<ExtendedImage>
     );
   }
 
+  // this is the final widget , this is for when the loading state is completed
+  // now we return the appropriate widget based on the ExtendedImageMode.gesture)
   Widget _getCompletedWidget() {
     Widget current;
     if (widget.mode == ExtendedImageMode.gesture) {

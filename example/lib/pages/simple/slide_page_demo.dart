@@ -96,56 +96,63 @@ class _SlidePageState extends State<SlidePage> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
+      color: const Color.fromRGBO(0, 0, 0, 0),
       child: ExtendedImageSlidePage(
         key: slidePagekey,
         child: GestureDetector(
-          child: widget.url == 'This is an video'
-              ? ExtendedImageSlidePageHandler(
-                  child: Material(
-                    child: Container(
-                      alignment: Alignment.center,
-                      color: Colors.yellow,
-                      child: const Text('This is an video'),
-                    ),
-                  ),
+          child:
+              // widget.url == 'This is an video' ?
+              // if it is a video (from the url we will know) , then use the ExtendedImageSlidePageHandler if not (if it is an image) then use the  HeroWidget
+              // ExtendedImageSlidePageHandler(
+              //   // the child is separate from the heroBuilder
+              //   // hero builder child -
+              //   // the image we see in the gridView
+              //     child: Material(
+              //       child: Container(
+              //         alignment: Alignment.center,
+              //         color: Colors.yellow,
+              //         child: const Text('This is an video'),
+              //       ),
+              //     ),
 
-                  ///make hero better when slide out
-                  heroBuilderForSlidingPage: (Widget result) {
-                    return Hero(
-                      tag: widget.url!,
-                      child: result,
-                      flightShuttleBuilder: (BuildContext flightContext,
-                          Animation<double> animation,
-                          HeroFlightDirection flightDirection,
-                          BuildContext fromHeroContext,
-                          BuildContext toHeroContext) {
-                        final Hero hero =
-                            (flightDirection == HeroFlightDirection.pop
-                                ? fromHeroContext.widget
-                                : toHeroContext.widget) as Hero;
+              //     ///make hero better when slide out
+              //     heroBuilderForSlidingPage: (Widget result) {
+              //       return Hero(
+              //         tag: widget.url!,
+              //         child: result,
+              //         flightShuttleBuilder: (BuildContext flightContext,
+              //             Animation<double> animation,
+              //             HeroFlightDirection flightDirection,
+              //             BuildContext fromHeroContext,
+              //             BuildContext toHeroContext) {
+              //           final Hero hero =
+              //               (flightDirection == HeroFlightDirection.pop
+              //                   ? fromHeroContext.widget
+              //                   : toHeroContext.widget) as Hero;
 
-                        return hero.child;
-                      },
-                    );
-                  },
-                )
-              : HeroWidget(
-                  child: ExtendedImage.network(
-                    widget.url!,
-                    enableSlideOutPage: true,
-                  ),
-                  tag: widget.url!,
-                  slideType: SlideType.onlyImage,
-                  slidePagekey: slidePagekey,
-                ),
+              //           return hero.child;
+              //         },
+              //       );
+              //     },
+              //   )
+              // :
+              // haven;t seen the use of this yet, so i'll comment it out
+              HeroWidget(
+            child: ExtendedImage.network(
+              widget.url!,
+              enableSlideOutPage: true,
+            ),
+            tag: widget.url!,
+            slideType: SlideType.onlyImage,
+            slidePagekey: slidePagekey,
+          ),
           onTap: () {
             slidePagekey.currentState!.popPage();
             Navigator.pop(context);
           },
         ),
         slideAxis: SlideAxis.both,
-        slideType: SlideType.onlyImage,
+        slideType: SlideType.wholePage,
       ),
     );
   }

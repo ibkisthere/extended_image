@@ -1,7 +1,7 @@
-import 'package:extended_image/src/gesture/utils.dart';
+import 'utils.dart';
 
-import 'package:extended_image/src/image/raw_image.dart';
-import 'package:extended_image/src/utils.dart';
+import '../image/raw_image.dart';
+import '../utils.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -47,6 +47,7 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
   late GestureAnimation _gestureAnimation;
   GestureConfig? _gestureConfig;
   ExtendedImageGesturePageViewState? _pageViewState;
+// we use this to get the slidePageState from the ExtendedImageGesture -> that we are currently in
   ExtendedImageSlidePageState? get extendedImageSlidePageState =>
       widget.extendedImageState.slidePageState;
 
@@ -134,9 +135,11 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
   void didChangeDependencies() {
     super.didChangeDependencies();
     _pageViewState = null;
+    // if the inPageView in the gestureConfig is true , then we look for the ExtendedImageGesturePageViewState up the widget hierarchy tree
     if (_gestureConfig!.inPageView) {
       _pageViewState =
           context.findAncestorStateOfType<ExtendedImageGesturePageViewState>();
+        // then we set (its a setter in the class) the extendedImageGestureState to this - which represents the current Object - the stateful class we are in 
       _pageViewState?.extendedImageGestureState = this;
     }
   }
@@ -145,6 +148,8 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
   void didUpdateWidget(ExtendedImageGesture oldWidget) {
     super.didUpdateWidget(oldWidget);
     _initGestureConfig();
+
+    // same thing was defined in didChangeDependencies
     _pageViewState = null;
     if (_gestureConfig!.inPageView) {
       _pageViewState =
@@ -482,3 +487,6 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
     }
   }
 }
+
+// Study Gestures.dart Gesture Details
+// Study utils.dart - Gesture details

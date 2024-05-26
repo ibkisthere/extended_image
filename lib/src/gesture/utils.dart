@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:extended_image/src/typedef.dart';
+import '../typedef.dart';
 import 'package:flutter/material.dart';
 import '../utils.dart';
 import 'slide_page.dart';
@@ -447,7 +447,7 @@ enum ActionType {
   edit,
 }
 
-const double minMagnitude = 400.0;
+const double minMagnitude = 4000.0;
 const double velocity = minMagnitude / 1000.0;
 const double minGesturePageDelta = 5.0;
 
@@ -515,6 +515,7 @@ class GestureAnimation {
 
 ///ExtendedImageGesturePage
 
+// this function just mostly controls how the opacity changes with the page offset
 Color defaultSlidePageBackgroundHandler({
   Offset offset = Offset.zero,
   Size pageSize = const Size(100, 100),
@@ -533,6 +534,7 @@ Color defaultSlidePageBackgroundHandler({
   return color.withOpacity(min(1.0, max(1.0 - opacity, 0.0)));
 }
 
+// we have to know when sliding has ended - this is used to reset page position (not pop it)
 bool defaultSlideEndHandler({
   Offset offset = Offset.zero,
   Size pageSize = const Size(100, 100),
@@ -542,14 +544,15 @@ bool defaultSlideEndHandler({
   if (pageGestureAxis == SlideAxis.both) {
     return offset.distance.greaterThan(
         Offset(pageSize.width, pageSize.height).distance / parameter);
-  } else if (pageGestureAxis == SlideAxis.horizontal) {
-    return offset.dx.abs().greaterThan(pageSize.width / parameter);
-  } else if (pageGestureAxis == SlideAxis.vertical) {
-    return offset.dy.abs().greaterThan(pageSize.height / parameter);
+  // } else if (pageGestureAxis == SlideAxis.horizontal) {
+  //   return offset.dx.abs().greaterThan(pageSize.width / parameter);
+  // } else if (pageGestureAxis == SlideAxis.vertical) {
+  //   return offset.dy.abs().greaterThan(pageSize.height / parameter);
   }
   return true;
 }
 
+// controls how the image scales as we slide , horizontally and vertically , or both
 double defaultSlideScaleHandler({
   Offset offset = Offset.zero,
   Size pageSize = const Size(100, 100),
@@ -558,10 +561,26 @@ double defaultSlideScaleHandler({
   double scale = 0.0;
   if (pageGestureAxis == SlideAxis.both) {
     scale = offset.distance / Offset(pageSize.width, pageSize.height).distance;
-  } else if (pageGestureAxis == SlideAxis.horizontal) {
-    scale = offset.dx.abs() / (pageSize.width / 2.0);
-  } else if (pageGestureAxis == SlideAxis.vertical) {
-    scale = offset.dy.abs() / (pageSize.height / 2.0);
+    print('this is the changing scale ${scale}');
   }
-  return max(1.0 - scale, 0.8);
+  // don't need this
+  // if slideAxis is only set to horizontal
+  // else if (pageGestureAxis == SlideAxis.horizontal) {
+  //   scale = offset.dx.abs() / (pageSize.width / 100);
+  // }
+  // // if slideAxis is only set to vertical
+  // else if (pageGestureAxis == SlideAxis.vertical) {
+  //   scale = offset.dy.abs() / (pageSize.height / 100);
+  // }
+  // this return gives us a max value that we can scale
+  // return max(1.0 - scale, 0.8);
+
+  // we have to make a custom scaling handler that achieves the snapchat effect
+  // so its basically -
+  // we have a handler - 
+  // starting out the offset is fixed
+  //as we pan vertically - it changes the border radius -> when the border radius reaches a certain value 
+  return min(1.0 + scale, 0.8);
 }
+
+
